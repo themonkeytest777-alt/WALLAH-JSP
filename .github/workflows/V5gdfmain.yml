@@ -1,0 +1,72 @@
+name: build
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le depot
+        uses: actions/checkout@v4
+
+      - name: Remettre les fichiers dans leurs dossiers
+        shell: bash
+        run: |
+          set -eu
+          # 1) "__" dans le nom = "/" dans le chemin
+          for f in *__*; do
+            [ -f "$f" ] || continue
+            d="${f//__//}"
+            mkdir -p "$(dirname "$d")"
+            mv "$f" "$d"
+          done
+
+          # 2) Les points au milieu des noms sont parfois remplaces par "_" a l'envoi
+          R=src/main/resources
+          if [ -f "$R/fabric_mod.json" ]; then
+            mv "$R/fabric_mod.json" "$R/fabric.mod.json"
+          fi
+          if [ -f "$R/cobbleautominer_mixins.json" ]; then
+            mv "$R/cobbleautominer_mixins.json" "$R/cobbleautominer.mixins.json"
+          fi
+
+          # 3) Verification des fichiers indispensables
+          missing=0
+          for need in build.gradle gradle.properties settings.gradle \
+                      "$R/fabric.mod.json" "$R/cobbleautominer.mixins.json"; do
+            if [ ! -f "$need" ]; then
+              echo "::error::Fichier manquant : $need"
+              missing=1
+            fi
+          done
+          [ "$missing" -eq 0 ]
+
+          find src -type f | sort
+
+      - name: Installer Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Installer Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.10.2
+
+      - name: Compiler
+        run: gradle build --no-daemon --stacktrace
+
+      - name: Envoyer le jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: cobble-auto-miner
+          path: |
+            build/libs/*.jar
+            !build/libs/*-sources.jar
+          if-no-files-found: error
