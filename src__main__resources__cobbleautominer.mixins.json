@@ -1,0 +1,8 @@
+{
+  "required": true,
+  "package": "com.cobbleautominer.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "client": ["InteractionManagerAccessor"],
+  "injectors": { "defaultRequire": 1 }
+}

@@ -1,0 +1,7 @@
+{
+  "key.cam2.toggle": "Auto-miner: toggle",
+  "key.cam2.gui": "Auto-miner: open GUI",
+  "key.cam2.esp": "Auto-miner: toggle ESP",
+  "key.cam2.refresh": "Auto-miner: reload chunks",
+  "key.categories.cam2": "Cobble Auto Miner"
+}

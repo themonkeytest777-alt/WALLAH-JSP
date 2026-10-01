@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "cobbleautominer",
+  "version": "${version}",
+  "name": "Cobble Auto Miner 2",
+  "description": "Auto-mineur intelligent (pathfinding, minage naturel, ESP) pour les pierres Cobblemon : aube, eclat, nuit, glace. Interface complete.",
+  "authors": ["Toi"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": { "client": ["com.cobbleautominer.CamClient"] },
+  "mixins": ["cobbleautominer.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": "1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
